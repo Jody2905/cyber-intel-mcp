@@ -21,3 +21,13 @@ def test_bm25_doc_type_filter_and_empty_query():
     index = BM25Index(docs)
     assert [d.source_id for d, _ in index.search("shared", doc_types={"kev"})] == ["b"]
     assert index.search("the of and") == []
+
+
+def test_hybrid_search_puts_exact_ids_first():
+    from cyber_intel_mcp.server import get_store
+
+    store = get_store()
+    hits = store.search("What is the CVSS base score of CVE-2021-44228?", limit=5)
+    assert [(d.source_id, m) for d, _, m in hits[:2]] == [("cve:CVE-2021-44228", "exact_id"), ("kev:CVE-2021-44228", "exact_id")]
+    assert hits[2][2] == "keyword"
+    assert [d.source_id for d, _, _ in store.search("t1190 initial access", doc_types={"attack"})][:1] == ["attack:T1190"]

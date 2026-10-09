@@ -18,7 +18,7 @@ It is the tool layer for a study of agent reliability: *Can AI agents reliably c
 | `lookup_cve(cve_id)` | CVE description, CVSS score and its source, CWEs, affected products, dates, and KEV status |
 | `search_kev(vendor, product, added_after, added_before, ransomware_only, limit)` | Filter the KEV catalog; returns the total match count plus entries sorted by date added |
 | `get_attack_technique(technique_id)` | ATT&CK technique name, tactics, platforms, description |
-| `search_corpus(query, doc_types, limit)` | BM25 keyword search over all CVE, KEV and ATT&CK records |
+| `search_corpus(query, doc_types, limit)` | Search over all CVE, KEV and ATT&CK records: ids in the query (CVE-…, T1234) are matched exactly and ranked first, then BM25 keyword matches |
 | `get_source(source_id)` | Full record behind a source id, used to verify citations |
 
 All tools are annotated read-only. Malformed input (e.g. `CVE-bad`) returns a tool error; a well-formed id that isn't in the snapshot returns `found: false`, so an agent can tell "I asked wrongly" apart from "this isn't in the data".
@@ -38,7 +38,7 @@ pip install -e ".[dev]"
 pytest
 ```
 
-The package ships with a **sample snapshot**: the full KEV catalog, all current ATT&CK Enterprise techniques, and 50 well-known CVE records (Log4Shell, EternalBlue, ProxyLogon, MOVEit and others, plus a few that are deliberately *not* in KEV). It works straight after install.
+The package ships with a **sample snapshot**: the full KEV catalog, all current ATT&CK Enterprise techniques, and 300 CVE records. These are 50 well-known CVEs (Log4Shell, EternalBlue, ProxyLogon, MOVEit and others), about 230 KEV CVEs spread across 84 vendors and 2007–2026, and 18 well-known CVEs that are deliberately *not* in KEV. The list is frozen in `data/sample_cves.txt`, so `cyber-intel-fetch --sample` rebuilds the same sample. It works straight after install.
 
 ### Build a full snapshot
 
@@ -92,6 +92,7 @@ src/cyber_intel_mcp/
   normalize.py   flattens upstream CVE / KEV / ATT&CK formats
   fetch.py       builds snapshots (cyber-intel-fetch)
   data/sample/   bundled sample snapshot
+  data/sample_cves.txt  the frozen list of CVEs in the sample
 tests/           store unit tests + end-to-end tests through an MCP client
 ```
 

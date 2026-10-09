@@ -115,6 +115,30 @@ class SnapshotStore:
             )
         return docs
 
+    # ---- search ---------------------------------------------------------
+
+    _ID_RE = re.compile(r"\b(CVE-\d{4}-\d{4,}|T\d{4}(?:\.\d{3})?)\b", re.IGNORECASE)
+
+    def search(self, query: str, limit: int = 5, doc_types: set[str] | None = None) -> list[tuple[Document, float, str]]:
+        """Hybrid search: exact identifier matches first, then BM25 keyword matches.
+
+        Plain BM25 lets an id like CVE-2021-44228 be outranked by long documents
+        that repeat the query's other words ("CVSS base score" appears verbatim in
+        many vendor descriptions). Real retrieval systems match identifiers exactly,
+        so ids found in the query are looked up directly and ranked first.
+        Returns (document, score, match) with match "exact_id" or "keyword".
+        """
+        keyword = self.index.search(query, limit=limit, doc_types=doc_types)
+        top = keyword[0][1] if keyword else 0.0
+        ids = {m.upper() for m in self._ID_RE.findall(query)}
+        exact = [d for d in self.index.docs
+                 if d.source_id.split(":", 1)[1] in ids and (not doc_types or d.doc_type in doc_types)]
+        exact.sort(key=lambda d: d.source_id)
+        seen = {d.source_id for d in exact}
+        results = [(d, round(top + 1.0, 3), "exact_id") for d in exact]
+        results += [(d, sc, "keyword") for d, sc in keyword if d.source_id not in seen]
+        return results[:limit]
+
     # ---- lookups -------------------------------------------------------
 
     def get_source(self, source_id: str) -> dict[str, Any] | None:

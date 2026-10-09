@@ -102,4 +102,4 @@ def test_snapshot_resource():
             return await client.read_resource("cyber-intel://snapshot")
 
     manifest = json.loads(asyncio.run(run()).contents[0].text)
-    assert manifest["counts"]["cves"] == 50
+    assert manifest["counts"]["cves"] == 300

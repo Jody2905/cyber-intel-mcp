@@ -31,20 +31,14 @@ CVE_URL = "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/{yea
 
 PACKAGE_SAMPLE_DIR = Path(__file__).parent / "data" / "sample"
 
-# Well-known CVEs for the bundled sample. Most are in KEV; a few are deliberately not,
-# so "is this in KEV?" can have a "no" answer.
-SAMPLE_CVES = [
-    "CVE-2014-0160", "CVE-2014-6271", "CVE-2017-0143", "CVE-2017-0144", "CVE-2017-5638",
-    "CVE-2018-13379", "CVE-2019-0708", "CVE-2019-11510", "CVE-2019-19781", "CVE-2020-1472",
-    "CVE-2020-5902", "CVE-2020-10148", "CVE-2021-21972", "CVE-2021-22005", "CVE-2021-26855",
-    "CVE-2021-26857", "CVE-2021-26858", "CVE-2021-27065", "CVE-2021-31207", "CVE-2021-34473",
-    "CVE-2021-34523", "CVE-2021-34527", "CVE-2021-44228", "CVE-2021-45046", "CVE-2021-45105",
-    "CVE-2022-1388", "CVE-2022-22965", "CVE-2022-26134", "CVE-2022-30190", "CVE-2022-40684",
-    "CVE-2022-41040", "CVE-2022-41082", "CVE-2023-0669", "CVE-2023-2868", "CVE-2023-4966",
-    "CVE-2023-20198", "CVE-2023-20273", "CVE-2023-22515", "CVE-2023-23397", "CVE-2023-27350",
-    "CVE-2023-34362", "CVE-2023-38831", "CVE-2023-46805", "CVE-2024-21887", "CVE-2024-21893",
-    "CVE-2024-3400", "CVE-2014-3566", "CVE-2016-2183", "CVE-2023-44487", "CVE-2024-3094",
-]
+# The bundled sample's CVEs are frozen in a file so it can be rebuilt identically:
+# 50 well-known CVEs, ~240 KEV CVEs spread across vendors and years (seeded random
+# pick), and 18 well-known CVEs that are *not* in KEV, so "is it in KEV?" can be "no".
+SAMPLE_CVE_LIST = Path(__file__).parent / "data" / "sample_cves.txt"
+
+
+def sample_cves() -> list[str]:
+    return [line.strip() for line in SAMPLE_CVE_LIST.read_text().splitlines() if line.strip()]
 
 
 def http_get_json(url: str, retries: int = 3) -> Any:
@@ -139,7 +133,7 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     if args.sample:
-        build_snapshot(PACKAGE_SAMPLE_DIR, SAMPLE_CVES, args.workers)
+        build_snapshot(PACKAGE_SAMPLE_DIR, sample_cves(), args.workers)
     else:
         build_snapshot(args.out, [c.upper() for c in args.cves] if args.cves else None, args.workers)
 

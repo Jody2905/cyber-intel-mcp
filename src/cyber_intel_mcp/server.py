@@ -146,18 +146,18 @@ def search_corpus(
     ] = None,
     limit: Annotated[int, Field(ge=1, le=20)] = 5,
 ) -> dict[str, Any]:
-    """Keyword (BM25) search across all CVE, KEV and ATT&CK records. Use it when you don't know an exact id."""
+    """Search all CVE, KEV and ATT&CK records. Ids in the query (CVE-..., T1234) are matched exactly and listed first; the rest is BM25 keyword search."""
     allowed = {"cve", "kev", "attack"}
     types = set(doc_types or [])
     if types - allowed:
         raise ToolError(f"Unknown doc_types {sorted(types - allowed)}; use {sorted(allowed)}.")
-    hits = get_store().index.search(query, limit=limit, doc_types=types or None)
+    hits = get_store().search(query, limit=limit, doc_types=types or None)
     return {
         "query": query,
         "results": [
             {"source_id": d.source_id, "type": d.doc_type, "title": d.title,
-             "snippet": d.text[:300], "score": round(score, 3)}
-            for d, score in hits
+             "snippet": d.text[:300], "score": round(score, 3), "match": match}
+            for d, score, match in hits
         ],
     }
 

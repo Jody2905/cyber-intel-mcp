@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cyber-intel-mcp"
-version = "0.1.0"
+version = "0.2.0"
 description = "MCP server exposing a frozen snapshot of CVE, CISA KEV and MITRE ATT&CK data as read-only tools"
 readme = "README.md"
 license = "MIT"

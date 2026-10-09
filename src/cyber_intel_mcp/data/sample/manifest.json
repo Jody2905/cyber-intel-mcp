@@ -1,9 +1,9 @@
 {
-  "built_at": "2026-10-09T01:42:41+00:00",
+  "built_at": "2026-10-09T03:05:51+00:00",
   "kev_catalog_version": "2026.10.08",
   "attack_last_modified": "2026-08-04",
   "counts": {
-    "cves": 50,
+    "cves": 300,
     "kev": 1739,
     "attack_techniques": 697
   },
