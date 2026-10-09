@@ -1,0 +1,17 @@
+{
+  "built_at": "2026-10-09T01:42:41+00:00",
+  "kev_catalog_version": "2026.10.08",
+  "attack_last_modified": "2026-08-04",
+  "counts": {
+    "cves": 50,
+    "kev": 1739,
+    "attack_techniques": 697
+  },
+  "missing_cves": [],
+  "sources": {
+    "kev": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json",
+    "attack": "https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json",
+    "cve": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/{year}/{bucket}xxx/{cve_id}.json"
+  },
+  "attribution": "MITRE ATT&CK(R) content (c) The MITRE Corporation, used under the ATT&CK Terms of Use. CVE records from the CVE Program; KEV from CISA."
+}

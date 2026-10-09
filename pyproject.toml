@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cyber-intel-mcp"
+version = "0.1.0"
+description = "MCP server exposing a frozen snapshot of CVE, CISA KEV and MITRE ATT&CK data as read-only tools"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Jody-Ann Trimmingham" }]
+dependencies = ["mcp>=2.2,<3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+cyber-intel-mcp = "cyber_intel_mcp.server:main"
+cyber-intel-fetch = "cyber_intel_mcp.fetch:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cyber_intel_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
